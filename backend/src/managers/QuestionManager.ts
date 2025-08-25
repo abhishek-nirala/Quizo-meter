@@ -1,8 +1,7 @@
 
 import { Question } from '../interface';
-export default class Questions {
+export default class QuestionsManager {
 
-    private questions = new Map<string, Question[]>()
     private roomId: string
     private quesArray: Question[] = []
 
@@ -10,33 +9,40 @@ export default class Questions {
         this.roomId = roomId;
     }
 
-    createQuestion(quesNo: number, totalQues: number, ans: string, option: []): Question {
+    createQuestion(quesNo: number, title: string, ans: string, option: string[]): Question {
         const question: Question = {
             currentQuestionNo: quesNo,
-            totalQuestions: totalQues,
+            // totalQuestions: totalQues,
+            questionTitle: title,
             answerOfCurrentQuestionNo: ans,
             optionsOfCurrentQuestion: option,
 
         }
         this.quesArray.push(question)
 
-        this.questions.set(this.roomId, this.quesArray)
         return question;
     }
 
     getQuestions(roomId: string) {
-        const id = this.questions.get(roomId)
-        if (id) {
-            console.log("roomId is not found in Questions")
+        if (this.quesArray.length === 0) {
+            console.log("Room not found in Questions")
+            return [];
         }
-        else
-            return this.questions
+        return this.quesArray;
     }
 
-    editQuestion(){
+    editQuestion(quesNo: number, updatedData: Partial<Question>) {
+
+        const question = this.quesArray.findIndex(q => q.currentQuestionNo === quesNo)
+        if (question === -1) {
+            console.log("couldn't find the question!");
+            return
+        }
+        this.quesArray[question] = { ...this.quesArray[question], ...updatedData }
+
 
     }
-    deleteQuestion(){
-
+    deleteQuestion(quesNo: number) {
+        this.quesArray = this.quesArray.filter(q => q.currentQuestionNo !== quesNo);
     }
 }
