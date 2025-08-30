@@ -1,48 +1,42 @@
-
 import { Question } from '../interface';
+
 export default class QuestionsManager {
+    private questions: Question[] = []; // Just stores questions for THIS room
 
-    private roomId: string
-    private quesArray: Question[] = []
-
-    constructor(roomId: string) {
-        this.roomId = roomId;
-    }
-
-    createQuestion(quesNo: number, title: string, ans: string, option: string[]): Question {
+    createQuestion(
+        quesNo: number,
+        title: string,
+        ans: string,
+        options: string[]
+    ): Question {
         const question: Question = {
             currentQuestionNo: quesNo,
-            // totalQuestions: totalQues,
             questionTitle: title,
             answerOfCurrentQuestionNo: ans,
-            optionsOfCurrentQuestion: option,
+            optionsOfCurrentQuestion: options,
+        };
 
-        }
-        this.quesArray.push(question)
-
+        this.questions.push(question);
         return question;
     }
 
-    getQuestions(roomId: string) {
-        if (this.quesArray.length === 0) {
-            console.log("Room not found in Questions")
-            return [];
-        }
-        return this.quesArray;
+    getQuestions(): Question[] {
+        return this.questions;
     }
 
-    editQuestion(quesNo: number, updatedData: Partial<Question>) {
+    editQuestion(quesNo: number, updatedQuestion: Partial<Question>) {
+        const index = this.questions.findIndex(q => q.currentQuestionNo === quesNo);
+        if (index === -1) return false;
 
-        const question = this.quesArray.findIndex(q => q.currentQuestionNo === quesNo)
-        if (question === -1) {
-            console.log("couldn't find the question!");
-            return
-        }
-        this.quesArray[question] = { ...this.quesArray[question], ...updatedData }
-
-
+        this.questions[index] = { ...this.questions[index], ...updatedQuestion };
+        return true;
     }
+
     deleteQuestion(quesNo: number) {
-        this.quesArray = this.quesArray.filter(q => q.currentQuestionNo !== quesNo);
+        const index = this.questions.findIndex(q => q.currentQuestionNo === quesNo);
+        if (index === -1) return false;
+
+        this.questions.splice(index, 1);
+        return true;
     }
 }

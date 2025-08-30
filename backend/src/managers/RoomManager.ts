@@ -1,8 +1,9 @@
 
 import { SingleRoom } from '../interface'
 import { randomUUID } from 'crypto';
+import {Participant} from '../interface'
 
-export class RoomManager {
+export default class RoomManager {
 
     private rooms = new Map<string, SingleRoom>();
 
@@ -10,28 +11,31 @@ export class RoomManager {
         return Math.floor(1000 + Math.random() * 9000).toString();
     }
 
-    createRoom(initialRoomData: Partial<SingleRoom>): SingleRoom {
-        const createRoom: SingleRoom = {
-            id: randomUUID(),
-            code: this.generateJoinCode(), // 4-digit
-            adminId: initialRoomData.adminId!,
-            participants: new Map(),
+    createRoom(adminId: string, time: number): SingleRoom {
+        const room: SingleRoom = {
+            roomId: randomUUID(),
+            adminId: adminId,
+            participants: new Map<string, Participant>(),
             questions: [],
             currentQuestionIndex: 0,
             status: "waiting",
-            password: initialRoomData.password!
+            adminPassword: this.generateJoinCode(), //4-digit code to let user join as admin
+            questionDisplayTimeINSeconds: time
         };
 
-        this.rooms.set(createRoom.id, createRoom)
-        return createRoom;
+        this.rooms.set(room.roomId, room)
+        return room;
     }
 
     getRoom(roomId: string): SingleRoom | undefined {
-
         const room = this.rooms.get(roomId);
-
         if (!room) {
-            console.log("roomId does not found");
+            console.log("Room not found");
+            return undefined;
         } else return room
+    }
+
+    endRoom(roomId: string) {
+        return this.rooms.delete(roomId)
     }
 }
