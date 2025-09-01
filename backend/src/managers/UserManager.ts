@@ -10,7 +10,7 @@ export class UserManager {
         const room = this.roomManager.getRoom(roomId);
         if (!room) {
             console.error(`Room with ID ${roomId} not found`);
-            return null; 
+            return null;
         }
 
         if (!room.participants.has(userId)) {
@@ -58,6 +58,8 @@ export class UserManager {
         if (participant) {
             room.participants.set(userId, participant);
         }
+        return room.participants
 
     }
+
 }
