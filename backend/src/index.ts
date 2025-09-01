@@ -66,7 +66,7 @@ app.get('/', (req, res) => {
 app.post("/create-room", (req: Request, res: Response) => {
   const { time } = req.body;
   if (!time) {
-    return res.status(400).json({ error: "Missing adminId or time" });
+    return res.status(400).json({ error: "Missing time" });
   }
   const adminId = crypto.randomUUID()
 
@@ -75,17 +75,17 @@ app.post("/create-room", (req: Request, res: Response) => {
 });
 // Join a room
 app.post("/join-room", (req: Request, res: Response) => {
-  const { roomId, userId } = req.body;
-  if (!roomId || !userId) {
-    return res.status(400).json({ error: "Missing roomId or userId" });
+  const { roomId} = req.body;
+  if (!roomId) {
+    return res.status(400).json({ error: "Missing roomId" });
   }
 
-  const uid = crypto.randomUUID();
+  const userId = crypto.randomUUID();
 
-  const user = userManager.joinRoom(roomId, uid);
+  const user = userManager.joinRoom(roomId, userId);
   if (!user) return res.status(404).json({ error: "Room not found" });
 
-  res.json({ message: "Joined successfully",uid, user });
+  res.json({ message: "Joined successfully",userId, user });
 });
 
 // Add a question

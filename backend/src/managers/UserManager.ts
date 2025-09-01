@@ -7,7 +7,9 @@ export class UserManager {
     }
 
     joinRoom(roomId: string, userId: string) {
+        console.log("roomId , userid",roomId, userId)
         const room = this.roomManager.getRoom(roomId);
+        console.log("room@join-room11 : ",room)
         if (!room) {
             console.error(`Room with ID ${roomId} not found`);
             return null;
@@ -23,6 +25,7 @@ export class UserManager {
         } else {
             console.log(`User ${userId} already joined room ${roomId}`);
         }
+        console.log("room@join-room26 : ",room)
 
         return room.participants.get(userId);
     }

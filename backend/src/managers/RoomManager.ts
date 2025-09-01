@@ -27,11 +27,11 @@ export default class RoomManager {
         return room;
     }
 
-    getRoom(roomId: string): SingleRoom | undefined {
+    getRoom(roomId: string): SingleRoom | null {
         const room = this.rooms.get(roomId);
         if (!room) {
-            console.log("Room not found");
-            return undefined;
+            console.log("Room not found with roomId : ",roomId);
+            return null;
         } else return room
     }
 
