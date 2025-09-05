@@ -71,11 +71,47 @@ app.post("/create-room", (req: Request, res: Response) => {
   const adminId = crypto.randomUUID()
 
   const newRoom = roomManager.createRoom(adminId, time);
-  res.status(201).json({success:true, message: "Room created", room: newRoom });
+  res.status(201).json({ success: true, message: "Room created", room: newRoom });
 });
+
+//get a single room
+app.get("/get-room", (req: Request, res: Response) => {
+  const { roomId } = req.body;
+  if (!roomId) {
+    return res.send(400).json({ error: "Missing room id" })
+  }
+  const room = roomManager.getRoom(roomId)
+  res.status(201).json({ success: true, message: "Room created", room });
+
+})
+//get all rooms on the server
+app.get("/get-allRooms", (req: Request, res: Response) => {
+  const rooms = roomManager.getAllRooms()
+  if (!rooms) {
+    return res.status(400).json({ success: false, message: "room is empty" });
+
+  }
+  return res.status(201).json({ rooms });
+
+})
+
+//get a room 
+app.get("/get-room", (req: Request, res: Response) => {
+  const { roomId } = req.body
+  if (!roomId) {
+    return res.status(400).json({ message: "enter roomId" })
+  }
+  const room = roomManager.getRoom(roomId)
+  if (!room) {
+    return res.status(200).json({ message: "couldn't fetch room" })
+  }
+  return res.status(200).json(room)
+})
+
+
 // Join a room
 app.post("/join-room", (req: Request, res: Response) => {
-  const { roomId} = req.body;
+  const { roomId } = req.body;
   if (!roomId) {
     return res.status(400).json({ error: "Missing roomId" });
   }
@@ -85,14 +121,14 @@ app.post("/join-room", (req: Request, res: Response) => {
   const user = userManager.joinRoom(roomId, userId);
   if (!user) return res.status(404).json({ error: "Room not found" });
 
-  res.json({ message: "Joined successfully",userId, user });
+  res.json({ message: "Joined successfully", userId, user });
 });
 
 // Add a question
 app.post("/add-question", (req: Request, res: Response) => {
   const { quesNo, title, ans, option } = req.body;
 
-  if ( !title || !ans || !option) {
+  if (!title || !ans || !option) {
     return res.status(400).json({ error: "Missing question details" });
   }
 

@@ -9,11 +9,15 @@
   <body>
     <h1>Lord of The Mysteries</h1>
     <button id="create-room">Create-Room</button>
+    <h1 id="roomID">roomId : <span id="span">...</span></h1>
+
+    <button onclick="getAllRooms()">getRooms</button>
 
     <label for="roomId">roomId</label>
     <input type="text" name="roomId" id="roomId" width="20" />
 
     <button id="join-room" onclick="joinRoom()">Join-Room</button>
+
     <script>
       const socket = io("http://localhost:3000");
 
@@ -35,6 +39,7 @@
             .then((data) => {
               if (data.success) {
                 console.log("create room!", data.room);
+                document.getElementById("span").textContent = data.room.roomId;
               } else {
                 console.error("Room creation failed:", data.error);
               }
@@ -47,19 +52,35 @@
         }
       });
 
-      //join-room
+      //get-allRooms
+      async function getAllRooms() {
+        const response = await fetch("http://localhost:3000/get-allRooms");
+        const data = await response.json();
+        console.log(data.rooms);
+      }
 
+      //get a room
+      async function getRoom() {
+        const roomId = document.getElementById("roomId").value;
+        if (!roomId) alert("please enter the roomID");
+
+        const res = await fetch("http://localhost:3000/get-room");
+        const data = await res.json();
+        console.log("data : ", data);
+      }
+
+      //join-room
       async function joinRoom() {
         console.log("join-room button clicked");
         const roomId = document.getElementById("roomId").value;
-        if(!roomId) alert("please enter the roomID");
-        console.log("roomId",roomId)
+        if (!roomId) alert("please enter the roomID");
+        console.log("roomId", roomId);
         let userId = localStorage.getItem("userId");
-        if(userId){
-          console.warn("user already exists",userId)
-          return
+        if (userId) {
+          console.warn("user already exists", userId);
+          return;
         }
-        // if (!userId) {
+
         const res = await fetch("http://localhost:3000/join-room", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -69,10 +90,9 @@
         console.log("data : ", data);
         userId = data.userId;
         localStorage.setItem("userId", userId);
-        // }
-
-        // socket.emit("joinRoom", { roomId, userId });
       }
+
+      // socket.emit("joinRoom", { roomId, userId });
     </script>
   </body>
 </html>

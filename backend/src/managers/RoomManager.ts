@@ -35,6 +35,15 @@ export default class RoomManager {
         } else return room
     }
 
+    getAllRooms() {
+        if (this.rooms.size === 0) {
+            return null;
+        }else {
+            return Object.fromEntries(this.rooms)
+        }
+
+    }
+
     endRoom(roomId: string) {
         return this.rooms.delete(roomId)
     }
